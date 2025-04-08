@@ -1,0 +1,7 @@
+.vs/
+bin/
+OpenGL-3D-ScratchPad.sln
+OpenGL-3D/obj/
+OpenGL-3D/OpenGL-3D.vcxproj
+OpenGL-3D/OpenGL-3D.vcxproj.filters
+OpenGL-3D/OpenGL-3D.vcxproj.user
