@@ -20,6 +20,10 @@ private:
 	glm::vec3 m_ObjectColor;
 	glm::vec3 m_SpecularHighlightColor;
 
+	// Textures
+	unsigned int m_DiffuseMap;
+	unsigned int m_SpecularMap;
+
 public:
 	DefaultScene(GLFWwindow* window);
 	~DefaultScene();

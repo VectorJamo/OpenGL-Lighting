@@ -2,6 +2,8 @@
 
 in vec3 vertNormal;
 in vec3 fragWorldPosition;
+in vec2 tCoord;
+
 out vec4 color;
 
 uniform vec3 lightPosition;

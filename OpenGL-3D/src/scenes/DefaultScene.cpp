@@ -1,6 +1,8 @@
 #include "DefaultScene.h"
 #include <cmath>
 
+#include "../utils/stb_image.h"
+
 #include <iostream>
 
 DefaultScene::DefaultScene(GLFWwindow* window)
@@ -28,9 +30,11 @@ void DefaultScene::Init()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Cube.vertices), m_Cube.vertices, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (const void*)(sizeof(float) * 3));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 3));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (const void*)(sizeof(float) * 6));
 
 	glBindVertexArray(0);
 
@@ -42,11 +46,28 @@ void DefaultScene::Init()
 
 	// Camera
 	m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-
+	
 	// Lights
 	m_LightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_ObjectColor = glm::vec3(0.0f, 1.0f, 0.0f);
 	m_SpecularHighlightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	// Textures
+	glGenTextures(1, &m_DiffuseMap);
+	glBindTexture(GL_TEXTURE_2D, m_DiffuseMap);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Load in the textures
+	int width, height, colorChannels;
+	unsigned char* data = stbi_load("res/container.jpg", &width, &height, &colorChannels, 0);
+
+	//glTexImage2D()
+	
+
 }
 
 void DefaultScene::Update()

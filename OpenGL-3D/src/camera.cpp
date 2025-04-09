@@ -4,7 +4,7 @@
 
 Camera::Camera(const glm::vec3& camPosition, const glm::vec3& camDirection)
 	:m_CamPosition(camPosition), m_CamDirection(camDirection), m_lastMouseX(0.0f), m_lastMouseY(0.0f), m_WorldUp(0.0f, 1.0f, 0.0f),
-	m_FirstFrame(true), m_CameraSpeed(0.2f)
+	m_FirstFrame(true), m_CameraSpeed(0.1f)
 {
 	m_ViewMatrix = glm::mat4(1.0f);
 	m_ViewMatrix = glm::lookAt(camPosition, camPosition + camDirection, m_WorldUp);
