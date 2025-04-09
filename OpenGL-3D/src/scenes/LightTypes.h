@@ -4,12 +4,12 @@
 #include "../camera.h"
 #include "../objects/Cube.h"
 
-class DefaultScene: public SceneManager
+class LightTypes : public SceneManager
 {
 private:
 	// Scene state variables
 	unsigned int m_VAO, m_VBO;
-	Shader* m_Shader, *m_LightShader;
+	Shader* m_Shader, * m_LightShader;
 	Camera* m_Camera;
 
 	Cube m_Cube;
@@ -26,8 +26,8 @@ private:
 	unsigned int m_SpecularMap;
 
 public:
-	DefaultScene(GLFWwindow* window);
-	~DefaultScene();
+	LightTypes(GLFWwindow* window);
+	~LightTypes();
 
 	void Init() override;
 	void Update() override;

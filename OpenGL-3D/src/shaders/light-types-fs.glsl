@@ -22,6 +22,8 @@ struct Material
 
 uniform Material material;
 
+uniform vec3 directionalLight;
+
 void main()
 {
 	// Ambient light

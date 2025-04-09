@@ -1,23 +1,23 @@
-#include "DefaultScene.h"
+#include "LightTypes.h"
 #include <cmath>
 
 #include "../utils/stb_image.h"
 
 #include <iostream>
 
-DefaultScene::DefaultScene(GLFWwindow* window)
+LightTypes::LightTypes(GLFWwindow* window)
 	:SceneManager(window), m_VAO(0), m_VBO(0), m_Shader(nullptr), m_LightShader(nullptr), m_Camera(nullptr)
 {
 }
 
-DefaultScene::~DefaultScene()
+LightTypes::~LightTypes()
 {
 	delete m_Shader;
 	delete m_LightShader;
 	delete m_Camera;
 }
 
-void DefaultScene::Init()
+void LightTypes::Init()
 {
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -45,14 +45,14 @@ void DefaultScene::Init()
 	m_CubePositions[4] = glm::vec3(4.0f, -2.0f, -5.0f);
 
 	// Shaders
-	m_Shader = new Shader("src/shaders/vs.glsl", "src/shaders/fs.glsl");
+	m_Shader = new Shader("src/shaders/light-types-vs.glsl", "src/shaders/light-types-fs.glsl");
 	m_LightShader = new Shader("src/shaders/light-vs.glsl", "src/shaders/light-fs.glsl");
 
 	glEnable(GL_DEPTH_TEST);
 
 	// Camera
 	m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-	
+
 	// Lights
 	m_LightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_ObjectColor = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -89,7 +89,7 @@ void DefaultScene::Init()
 	stbi_image_free(data);
 }
 
-void DefaultScene::Update()
+void LightTypes::Update()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -108,7 +108,7 @@ void DefaultScene::Update()
 	m_LightPosition = glm::vec3(lightX, 0.0f, lightZ - 5.0f); // Offset by -5 to revolve around the object
 }
 
-void DefaultScene::Render()
+void LightTypes::Render()
 {
 	glm::mat4 view = m_Camera->GetViewMatrix();
 
@@ -142,7 +142,7 @@ void DefaultScene::Render()
 	// Draw light source
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, m_LightPosition);
-	
+
 	m_LightShader->Use();
 	glUniformMatrix4fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "view"), 1, GL_FALSE, &view[0][0]);
@@ -151,7 +151,7 @@ void DefaultScene::Render()
 	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
 }
 
-void DefaultScene::ProcessInput()
+void LightTypes::ProcessInput()
 {
 	if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -175,10 +175,10 @@ void DefaultScene::ProcessInput()
 	}
 }
 
-void DefaultScene::InitObject()
+void LightTypes::InitObject()
 {
 }
 
-void DefaultScene::InitLight()
+void LightTypes::InitLight()
 {
 }
