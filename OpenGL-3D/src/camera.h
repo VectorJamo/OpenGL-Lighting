@@ -31,4 +31,6 @@ public:
 
 	inline const glm::mat4& GetViewMatrix() { return m_ViewMatrix; }
 	inline const glm::vec3& GetCameraPosition() { return m_CamPosition; }
+	inline const glm::vec3& GetCameraDirection() { return m_CamDirection; }
+
 };

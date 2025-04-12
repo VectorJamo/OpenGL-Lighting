@@ -23,9 +23,33 @@ struct Material
 uniform Material material;
 
 uniform vec3 directionalLight;
+uniform vec3 spotLightDirection;
 
 void main()
 {
+	// Directional light
+	float directionalLightStrength = max(dot(vertNormal, -normalize(directionalLight)), 0.0);
+	vec3 directionalLight = directionalLightStrength * lightColor;
+
+	vec3 directional = vec3(texture(material.diffuse, tCoord)) * directionalLightStrength;
+
+	// Point light
+	float k = 0.5;
+	float lightToFragDistance = length(fragWorldPosition - lightPosition);
+	float lightIntensity = 1.0/(k*lightToFragDistance); // Linear falloff
+
+	// Spot light
+	float innerCutOffAngle = cos(radians(10.0));
+	float outerCutOffAngle = cos(radians(15.0));
+	
+	vec3 eyeToFragVector = normalize(fragWorldPosition - cameraPosition);
+
+	float cosineAngle = dot(spotLightDirection, eyeToFragVector);
+	float epsilon = innerCutOffAngle - outerCutOffAngle;
+	float spotLightIntensity = clamp((cosineAngle - outerCutOffAngle)/epsilon, 0.0, 1.0);
+
+	vec3 spotLight = vec3(texture(material.diffuse, tCoord)) * spotLightIntensity;
+
 	// Ambient light
 	float ambientStrength = 0.2f;
 	vec3 ambientLight = lightColor * ambientStrength;
@@ -39,6 +63,7 @@ void main()
 	vec3 diffuseLight = diffuseIntensity * lightColor;
 	
 	vec3 diffuse = diffuseLight * vec3(texture(material.diffuse, tCoord));
+	diffuse *= lightIntensity;
 	
 	// Specular light
 	vec3 fragToEyeVector = normalize(cameraPosition - fragWorldPosition);
@@ -46,7 +71,8 @@ void main()
 	vec3 reflectedVector = reflect(lightToFragVector, vertNormal);
 	float specularStrength = pow(max(dot(reflectedVector, fragToEyeVector), 0.0), material.shininess);
 
-	vec3 specularLight = specularStrength * vec3(texture(material.specular, tCoord));
+	vec3 specular = specularStrength * vec3(texture(material.specular, tCoord));
+	specular *= lightIntensity;
 
-	color = vec4(ambient + diffuse + specularLight, 1.0f);
+	color = vec4(ambient + diffuse + specular + directional + spotLight, 1.0f);
 }

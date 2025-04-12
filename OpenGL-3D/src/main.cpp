@@ -10,13 +10,15 @@
 #include "scenes/SceneManager.h"
 #include "scenes/DefaultScene.h"
 #include "scenes/LightTypes.h"
+#include "scenes/BaseScene.h"
+
 
 int main()
 {
 	Window* window = CreateBasicWindow();
 
 	// Scenes
-	SceneManager* defaultScene = new LightTypes(window->GetWindowInstance());
+	SceneManager* defaultScene = new BaseScene(window->GetWindowInstance());
 
 	SceneManager::CurrentScene = defaultScene;
 	SceneManager::CurrentScene->Init();

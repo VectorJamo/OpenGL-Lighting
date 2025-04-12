@@ -99,13 +99,11 @@ void LightTypes::Update()
 	glfwGetCursorPos(m_Window, &mx, &my);
 	m_Camera->Update((float)mx, (float)my);
 
-	// Light's motion
-	float radius = 5.0f;
-	float speed = 2.0f;
-	float lightX = radius * cos(speed * glfwGetTime());
-	float lightZ = radius * sin(speed * glfwGetTime());
+	// Directional Light 
+	m_DirectionalLight = glm::vec3(0.0f, -1.0f, 0.0f);
 
-	m_LightPosition = glm::vec3(lightX, 0.0f, lightZ - 5.0f); // Offset by -5 to revolve around the object
+	// Point Light
+	m_LightPosition = glm::vec3(5.0f, 3.0f, -6.0f); // Offset by -5 to revolve around the object
 }
 
 void LightTypes::Render()
@@ -127,6 +125,8 @@ void LightTypes::Render()
 		glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "view"), 1, GL_FALSE, &view[0][0]);
 		glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
 		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "lightPosition"), 1, &m_LightPosition[0]);
+		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "directionalLight"), 1, &m_DirectionalLight[0]);
+		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "spotLightDirection"), 1, &m_Camera->GetCameraDirection()[0]);
 		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "lightColor"), 1, &m_LightColor[0]);
 		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "objectColor"), 1, &m_ObjectColor[0]);
 		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "cameraPosition"), 1, &m_Camera->GetCameraPosition()[0]);
@@ -143,11 +143,12 @@ void LightTypes::Render()
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, m_LightPosition);
 
+	glBindVertexArray(m_VAO);
 	m_LightShader->Use();
 	glUniformMatrix4fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "view"), 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
-	glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "lightColor"), 1, &m_LightColor[0]);
+	glUniform3fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "lightColor"), 1, &m_LightColor[0]);
 	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
 }
 

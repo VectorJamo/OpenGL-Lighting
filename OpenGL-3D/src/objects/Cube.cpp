@@ -1,9 +1,8 @@
 #include "Cube.h"
-#pragma once
 
 Cube::Cube()
 {
-	float verts[] = {
+	float verts[] = { // Position, Normal, Texture Coordinate
 		-0.5f,  0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // Front 
 		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 		 0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
