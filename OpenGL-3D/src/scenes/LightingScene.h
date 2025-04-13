@@ -16,8 +16,11 @@ private:
 	Cube m_Cube;
 	glm::vec3 m_CubePositions[6];
 
+	// Cube Material
 	Texture* m_ContainerTexture;
-
+	glm::vec3 m_SpecularColor;
+	int m_Shininess;
+	
 	// Lights
 	glm::vec3 m_DirectionalLightDir;
 	glm::vec3 m_PointLight1Pos;
