@@ -3,6 +3,7 @@
 #include "../shader.h"
 #include "../camera.h"
 #include "../objects/Cube.h"
+#include "../texture.h"
 
 class BaseScene : public SceneManager
 {
@@ -14,6 +15,7 @@ private:
 
 	Cube m_Cube;
 
+	Texture* m_ContainerTexture;
 public:
 	BaseScene(GLFWwindow* window);
 	~BaseScene();

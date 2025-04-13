@@ -19,7 +19,7 @@ BaseScene::~BaseScene()
 
 void BaseScene::Init()
 {
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Buffers
 	glGenVertexArrays(1, &m_VAO);
@@ -45,8 +45,11 @@ void BaseScene::Init()
 	m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
 
 	// Lights
+	
 
 	// Textures
+	m_ContainerTexture = new Texture("res/container.png");
+	m_ContainerTexture->Bind();
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -78,6 +81,7 @@ void BaseScene::Render()
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "view"), 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
+	glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "textureUnit"), 0);
 	glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "cameraPosition"), 1, &m_Camera->GetCameraPosition()[0]);
 	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
 }
