@@ -14,20 +14,25 @@ private:
 	Camera* m_Camera;
 
 	Cube m_Cube;
+	Cube m_Plane;
 	glm::vec3 m_CubePositions[6];
 
 	// Cube Material
-	Texture* m_ContainerTexture;
+	Texture* m_ContainerTexture, *m_SpecularMap;
 	glm::vec3 m_SpecularColor;
 	int m_Shininess;
 	
 	// Lights
 	glm::vec3 m_DirectionalLightDir;
+	glm::vec3 m_DirectionalLightColor;
+
 	glm::vec3 m_PointLight1Pos;
 	glm::vec3 m_PointLight2Pos;
+	glm::vec3 m_PointLightColor, m_PointLightColor2;
 
-	glm::vec3 m_DirectionalLightColor;
-	glm::vec3 m_PointLightColor;
+	// Spotlight
+	glm::vec3 m_SpotLightColor;
+	float m_CutOffAngleInside, m_CutOffAngleOutside;
 
 public:
 	LightingScene(GLFWwindow* window);

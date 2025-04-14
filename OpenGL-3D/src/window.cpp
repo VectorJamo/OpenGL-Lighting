@@ -23,6 +23,8 @@ Window::Window(int width, int height, const char* title)
 		else {
 			glfwMakeContextCurrent(m_Window);
 
+			glfwSwapInterval(1); // Enable V-Sync
+
 			// Initialize GLAD
 			if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 			{

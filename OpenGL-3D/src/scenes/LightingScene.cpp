@@ -26,7 +26,7 @@ void LightingScene::Init()
 	m_CubePositions[4] = glm::vec3(-2.0f, -2.0f, -5.0f);
 	m_CubePositions[5] = glm::vec3(2.0f, 2.0f, -5.0f);
 
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Buffers
 	glGenVertexArrays(1, &m_VAO);
@@ -63,10 +63,17 @@ void LightingScene::Init()
 	m_PointLight1Pos = glm::vec3(-5.0f, 0.0f, -3.0f);
 	m_PointLight2Pos = glm::vec3(0.0f, -5.0f, -5.0f);
 	m_PointLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	m_PointLightColor2 = glm::vec3(1.0f, 0.0f, 0.0f);
+
+	m_SpotLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	m_CutOffAngleInside = 20.0f;
+	m_CutOffAngleInside = 25.0f;
 
 	// Textures
 	m_ContainerTexture = new Texture("res/container.png");
+	m_SpecularMap = new Texture("res/container_specular.png");
 	m_ContainerTexture->Bind();
+	m_SpecularMap->Bind(1);
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -91,7 +98,8 @@ void LightingScene::Render()
 
 	// Draw lights
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(m_PointLight1Pos);
+	model = glm::translate(model, m_PointLight1Pos);
+	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 
 	glBindVertexArray(m_VAO);
 	m_LightShader->Use();
@@ -99,8 +107,10 @@ void LightingScene::Render()
 	glUniformMatrix4fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "view"), 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
-
-	model = glm::translate(m_PointLight2Pos);
+	
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, m_PointLight2Pos);
+	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 	glUniformMatrix4fv(glGetUniformLocation(m_LightShader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
 
@@ -116,11 +126,17 @@ void LightingScene::Render()
 		glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
 		
 		glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "material.diffuse"), 0);
-		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "material.specular"), 1, &m_SpecularColor[0]);
+		glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "material.specular"), 1);
 		glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "material.shininess"), m_Shininess);
 
 		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "eyePos"), 1, &m_Camera->GetCameraPosition()[0]);
 		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "directionalLightDir"), 1, &m_DirectionalLightDir[0]);
+		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "pointLight1Pos"), 1, &m_PointLight1Pos[0]);
+		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "pointLight2Pos"), 1, &m_PointLight2Pos[0]);
+		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "cameraDirection"), 1, &m_Camera->GetCameraDirection()[0]);
+		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "pointLightColor"), 1, &m_PointLightColor[0]);
+		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "pointLightColor2"), 1, &m_PointLightColor2[0]);
+		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "spotLightColor"), 1, &m_SpotLightColor[0]);
 
 		glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "directionalLightColor"), 1, &m_DirectionalLightColor[0]);
 		glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
@@ -149,4 +165,16 @@ void LightingScene::ProcessInput()
 	{
 		m_Camera->MoveRight();
 	}
+	
+	// For spotlight
+	//if (glfwGetKey(m_Window, GLFW_KEY_F) == GLFW_PRESS)
+	//{
+	//	m_Camera->MoveRight();
+	//}
+	//if (glfwGetKey(m_Window, GLFW_KEY_F) == GLFW_RELEASE)
+	//{
+	//	m_Camera->MoveRight();
+	//}
+
+
 }

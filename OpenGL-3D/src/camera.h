@@ -16,7 +16,7 @@ private:
 	bool m_FirstFrame;
 
 	const float m_CameraSpeed = 0.2f;
-	const float m_CameraMovementSpeed = 0.005f;
+	const float m_CameraMovementSpeed = 0.05f;
 
 public:
 	Camera(const glm::vec3& camPosition, const glm::vec3& camDirection);
