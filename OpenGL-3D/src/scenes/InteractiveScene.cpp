@@ -1,27 +1,25 @@
-#include "BaseScene.h"
+#include "InteractiveScene.h"
 #include <cmath>
 
 #include "../utils/stb_image.h"
 
 #include <iostream>
 
-BaseScene::BaseScene(GLFWwindow* window)
+InteractiveScene::InteractiveScene(GLFWwindow* window)
 	:SceneManager(window), m_VAO(0), m_VBO(0), m_Shader(nullptr), m_LightShader(nullptr), m_Camera(nullptr)
 {
 }
 
-BaseScene::~BaseScene()
+InteractiveScene::~InteractiveScene()
 {
-	for (auto& terrian : m_Terrian)
-		delete terrian;
+	delete m_ContainerTexture;
 
 	delete m_Shader;
 	delete m_LightShader;
 	delete m_Camera;
-
 }
 
-void BaseScene::Init()
+void InteractiveScene::Init()
 {
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -43,26 +41,24 @@ void BaseScene::Init()
 	glBindVertexArray(0);
 
 	// Shaders
-	m_Shader = new Shader("src/shaders/base/vs.glsl", "src/shaders/base/fs.glsl");
+	m_Shader = new Shader("src/shaders/interactive-scene-shaders/vs.glsl", "src/shaders/interactive-scene-shaders/fs.glsl");
 
 	// Camera
-	m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+	m_Camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+
+	// Colors
+	m_FloorColor = glm::vec3(0.8f, 0.7f, 0.9f);
 
 	// Lights
 
 	// Textures
-	m_FloorTexture = new Texture("res/dirt.jpg", GL_RGB);
-	m_FloorTexture->Bind(0);
+	m_ContainerTexture = new Texture("res/container.png", GL_RGBA);
+	m_ContainerTexture->Bind();
 
-	// Terrian
-	m_Terrian.emplace_back(new Terrian(0.0f, 0.0f));
-	m_Terrian.emplace_back(new Terrian(-1.0f, 0.0f));
-
-	glClearColor(0.2f, 0.8f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 }
 
-void BaseScene::Update()
+void InteractiveScene::Update()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -73,33 +69,44 @@ void BaseScene::Update()
 	m_Camera->Update((float)mx, (float)my);
 }
 
-void BaseScene::Render()
+void InteractiveScene::Render()
 {
 	// Draw object
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(glm::vec3(0.0f, 0.0f, -5.0f));
+	model = glm::translate(glm::vec3(0.0f, 0.0f, -4.0f));
 
 	glm::mat4 view = m_Camera->GetViewMatrix();
 
 	glm::mat4 projection = glm::mat4(1.0f);
 	projection = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	
+	// Texture coordinate scaler
+	glm::mat4 tCoordScale = glm::mat4(1.0f);
+	tCoordScale = glm::scale(tCoordScale, glm::vec3(1.0f, 1.0f, 1.0f));
 
+	// Cube
+	glBindVertexArray(m_VAO);
 	m_Shader->Use();
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "view"), 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
 	glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "textureUnit"), 0);
 	glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "cameraPosition"), 1, &m_Camera->GetCameraPosition()[0]);
+	glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "isFloor"), 0);
+	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
+
+	// Floor
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, -5.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(100.0f, 0.25f, 100.0f));
 	
-	for (auto& terrian : m_Terrian) 
-	{
-		glBindVertexArray(terrian->GetTerrianVAO());
-	
-		glDrawElements(GL_TRIANGLES, terrian->GetTerrianIndices().size(), GL_UNSIGNED_SHORT, 0);
-	}
+	glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "isFloor"), 1);
+	glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "floorColor"), 1, &m_FloorColor[0]);
+	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
+	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
 }
 
-void BaseScene::ProcessInput()
+void InteractiveScene::ProcessInput()
 {
 	if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{

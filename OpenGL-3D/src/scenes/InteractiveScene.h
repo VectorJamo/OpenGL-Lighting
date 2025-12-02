@@ -5,10 +5,7 @@
 #include "../objects/Cube.h"
 #include "../texture.h"
 
-#include "../models/Model.h"
-#include "../models/Terrian.h"
-
-class BaseScene : public SceneManager
+class InteractiveScene : public SceneManager
 {
 private:
 	// Scene state variables
@@ -16,16 +13,19 @@ private:
 	Shader* m_Shader, * m_LightShader;
 	Camera* m_Camera;
 
+	// Objects
 	Cube m_Cube;
+	Cube m_Plane;
 
-	Texture* m_ContainerTexture, *m_FloorTexture;
+	// Colors
+	glm::vec3 m_FloorColor;
 
-	// Terrian	
-	std::vector<Terrian*> m_Terrian;
+	// Textures
+	Texture* m_ContainerTexture;
 
 public:
-	BaseScene(GLFWwindow* window);
-	~BaseScene();
+	InteractiveScene(GLFWwindow* window);
+	~InteractiveScene();
 
 	void Init() override;
 	void Update() override;

@@ -1,16 +1,16 @@
-#include "BaseScene.h"
+#include "SimpleWorld.h"
 #include <cmath>
 
 #include "../utils/stb_image.h"
 
 #include <iostream>
 
-BaseScene::BaseScene(GLFWwindow* window)
+SimpleWorld::SimpleWorld(GLFWwindow* window)
 	:SceneManager(window), m_VAO(0), m_VBO(0), m_Shader(nullptr), m_LightShader(nullptr), m_Camera(nullptr)
 {
 }
 
-BaseScene::~BaseScene()
+SimpleWorld::~SimpleWorld()
 {
 	for (auto& terrian : m_Terrian)
 		delete terrian;
@@ -21,7 +21,7 @@ BaseScene::~BaseScene()
 
 }
 
-void BaseScene::Init()
+void SimpleWorld::Init()
 {
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -57,12 +57,14 @@ void BaseScene::Init()
 	// Terrian
 	m_Terrian.emplace_back(new Terrian(0.0f, 0.0f));
 	m_Terrian.emplace_back(new Terrian(-1.0f, 0.0f));
+	m_Terrian.emplace_back(new Terrian(-1.0f, 1.0f));
+	m_Terrian.emplace_back(new Terrian(0.0f, 1.0f));
 
 	glClearColor(0.2f, 0.8f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 }
 
-void BaseScene::Update()
+void SimpleWorld::Update()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -73,7 +75,7 @@ void BaseScene::Update()
 	m_Camera->Update((float)mx, (float)my);
 }
 
-void BaseScene::Render()
+void SimpleWorld::Render()
 {
 	// Draw object
 	glm::mat4 model = glm::mat4(1.0f);
@@ -99,7 +101,7 @@ void BaseScene::Render()
 	}
 }
 
-void BaseScene::ProcessInput()
+void SimpleWorld::ProcessInput()
 {
 	if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{

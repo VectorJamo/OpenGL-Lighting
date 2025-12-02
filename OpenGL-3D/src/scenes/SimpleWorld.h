@@ -8,7 +8,7 @@
 #include "../models/Model.h"
 #include "../models/Terrian.h"
 
-class BaseScene : public SceneManager
+class SimpleWorld : public SceneManager
 {
 private:
 	// Scene state variables
@@ -24,8 +24,8 @@ private:
 	std::vector<Terrian*> m_Terrian;
 
 public:
-	BaseScene(GLFWwindow* window);
-	~BaseScene();
+	SimpleWorld(GLFWwindow* window);
+	~SimpleWorld();
 
 	void Init() override;
 	void Update() override;

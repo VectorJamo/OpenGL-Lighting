@@ -9,8 +9,10 @@
 
 #include "scenes/SceneManager.h"
 #include "scenes/LightingScene.h"
+#include "scenes/InteractiveScene.h"
 #include "scenes/LightTypes.h"
 #include "scenes/BaseScene.h"
+#include "scenes/SimpleWorld.h"
 
 
 int main()
@@ -18,7 +20,7 @@ int main()
 	Window* window = CreateBasicWindow();
 
 	// Scenes
-	SceneManager* defaultScene = new LightingScene(window->GetWindowInstance());
+	SceneManager* defaultScene = new SimpleWorld(window->GetWindowInstance());
 
 	SceneManager::CurrentScene = defaultScene;
 	SceneManager::CurrentScene->Init();

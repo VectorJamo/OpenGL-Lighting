@@ -70,8 +70,8 @@ void LightingScene::Init()
 	m_CutOffAngleInside = 25.0f;
 
 	// Textures
-	m_ContainerTexture = new Texture("res/container.png");
-	m_SpecularMap = new Texture("res/container_specular.png");
+	m_ContainerTexture = new Texture("res/container.png", GL_RGBA);
+	m_SpecularMap = new Texture("res/container_specular.png", GL_RGBA);
 	m_ContainerTexture->Bind();
 	m_SpecularMap->Bind(1);
 
