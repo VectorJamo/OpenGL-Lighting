@@ -18,18 +18,27 @@ Texture::Texture(const char* texturePath, int channels)
 	// load and generate the textures
 	stbi_set_flip_vertically_on_load(true);
 
-	unsigned char* data = stbi_load(texturePath, &m_Width, &m_Height, &m_ColorChannels, 0);
+	unsigned char* data = nullptr;
+	data = stbi_load(texturePath, &m_Width, &m_Height, &m_ColorChannels, 0);
+
+	int format = 0;
+	if (m_ColorChannels == 3)
+	{
+		format = GL_RGB;
+	}
+	else if (m_ColorChannels == 4) {
+		format = GL_RGBA;
+	}
+
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, channels, m_Width, m_Height, 0, channels, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
 	}
 	else
 	{
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture::~Texture()

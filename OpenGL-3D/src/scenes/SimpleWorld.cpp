@@ -15,6 +15,8 @@ SimpleWorld::~SimpleWorld()
 	for (auto& terrian : m_Terrian)
 		delete terrian;
 
+	delete m_TreeModel;
+
 	delete m_Shader;
 	delete m_LightShader;
 	delete m_Camera;
@@ -52,16 +54,29 @@ void SimpleWorld::Init()
 
 	// Textures
 	m_FloorTexture = new Texture("res/dirt.jpg", GL_RGB);
-	m_FloorTexture->Bind(0);
+	m_TreeTexture = new Texture("res/tree_texture.png", GL_RGB);
+
+	//m_TreeTexture = new Texture("res/tree_texture.png", GL_RGBA);
 
 	// Terrian
+	m_Identity = glm::mat4(1.0f);
+
 	m_Terrian.emplace_back(new Terrian(0.0f, 0.0f));
 	m_Terrian.emplace_back(new Terrian(-1.0f, 0.0f));
 	m_Terrian.emplace_back(new Terrian(-1.0f, 1.0f));
 	m_Terrian.emplace_back(new Terrian(0.0f, 1.0f));
 
+	// Models
+	m_TreeModel = new Model("res/models/SimpleTree.obj");
+
 	glClearColor(0.2f, 0.8f, 0.8f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+
+	// TODO: PERFORMANCE OPTIMIZATION
+	
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_CCW);
+
 }
 
 void SimpleWorld::Update()
@@ -78,16 +93,16 @@ void SimpleWorld::Update()
 void SimpleWorld::Render()
 {
 	// Draw object
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(glm::vec3(0.0f, 0.0f, -5.0f));
-
 	glm::mat4 view = m_Camera->GetViewMatrix();
 
 	glm::mat4 projection = glm::mat4(1.0f);
-	projection = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 0.1f, 1000.0f);
+
+	m_FloorTexture->Bind(0);
 
 	m_Shader->Use();
-	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
+
+	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &m_Identity[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "view"), 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
 	glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "textureUnit"), 0);
@@ -99,6 +114,16 @@ void SimpleWorld::Render()
 	
 		glDrawElements(GL_TRIANGLES, terrian->GetTerrianIndices().size(), GL_UNSIGNED_SHORT, 0);
 	}
+	m_TreeTexture->Bind(0);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(glm::vec3(0.0f, 10.0f, -5.0f));
+	model = glm::scale(model, glm::vec3(1.0f, 20.0f, 1.0f));
+
+	glBindVertexArray(m_TreeModel->GetModelVAO());
+	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
+
+	glDrawElements(GL_TRIANGLES, m_TreeModel->GetModelIndices().size(), GL_UNSIGNED_SHORT, 0);
 }
 
 void SimpleWorld::ProcessInput()

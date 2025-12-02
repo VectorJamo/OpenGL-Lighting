@@ -75,8 +75,8 @@ void Model::LoadModel()
 				std::vector<std::string> vertexInfo = SplitLine(face, '/');
 
 				glm::vec3 position = positions[std::stoi(vertexInfo[0]) - 1];
-				glm::vec3 normal = positions[std::stoi(vertexInfo[1]) - 1];
-				glm::vec2 tc = positions[std::stoi(vertexInfo[2]) - 1];
+				glm::vec2 tc = textCoords[std::stoi(vertexInfo[1]) - 1];
+				glm::vec3 normal = normals[std::stoi(vertexInfo[2]) - 1];
 
 				Vertex vertex(position, tc, normal);
 				m_ModelVerts.push_back(vertex);

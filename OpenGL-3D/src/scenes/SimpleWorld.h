@@ -18,10 +18,16 @@ private:
 
 	Cube m_Cube;
 
-	Texture* m_ContainerTexture, *m_FloorTexture;
+	Texture* m_ContainerTexture;
+	Texture* m_FloorTexture;
+	Texture* m_TreeTexture;
 
 	// Terrian	
 	std::vector<Terrian*> m_Terrian;
+	glm::mat4 m_Identity;
+
+	// Models
+	Model* m_TreeModel;
 
 public:
 	SimpleWorld(GLFWwindow* window);
