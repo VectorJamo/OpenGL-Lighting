@@ -118,7 +118,7 @@ void SimpleWorld::Render()
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(glm::vec3(0.0f, 10.0f, -5.0f));
-	model = glm::scale(model, glm::vec3(1.0f, 20.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(5.0f, 8.0f, 5.0f));
 
 	glBindVertexArray(m_TreeModel->GetModelVAO());
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
