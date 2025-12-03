@@ -48,10 +48,7 @@ void Camera::Update(int mouseX, int mouseY)
 	{
 		m_CamDirection = camDirection;
 	}
-	else {
-		std::cout << "Vertical angle excedded!" << std::endl;
-	}
-	
+
 	m_ViewMatrix = glm::lookAt(m_CamPosition, m_CamPosition + m_CamDirection, m_WorldUp);
 }
 

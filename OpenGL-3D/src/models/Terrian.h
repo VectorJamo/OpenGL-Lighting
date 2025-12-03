@@ -21,6 +21,8 @@ public:
 	inline unsigned int GetTerrianVAO() { return m_VAO; }
 	inline std::vector<unsigned short> GetTerrianIndices() { return m_TerrianIndices; }
 
+	inline static constexpr int Terrian::GetTerrianSize() { return m_SIZE; }
+
 private:
 	std::vector<Vertex> GenerateTerrianSubPart(int xPos, int zPos, int yPos);
 

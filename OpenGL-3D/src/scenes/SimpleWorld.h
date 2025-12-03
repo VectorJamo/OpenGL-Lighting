@@ -22,12 +22,17 @@ private:
 	Texture* m_FloorTexture;
 	Texture* m_TreeTexture;
 
+	glm::vec4 m_SkyColor;
+
 	// Terrian	
 	std::vector<Terrian*> m_Terrian;
 	glm::mat4 m_Identity;
 
 	// Models
+	int m_NumTrees;
 	Model* m_TreeModel;
+	std::vector<glm::vec3> m_TreePositions;
+
 
 public:
 	SimpleWorld(GLFWwindow* window);
@@ -38,4 +43,3 @@ public:
 	void Render() override;
 	void ProcessInput();
 };
-

@@ -69,5 +69,5 @@ bool Window::GetWindowShouldClose() const
 
 Window* CreateBasicWindow()
 {
-	return new Window(800, 600, "GLFW Window");
+	return new Window(800, 600, "Simple World v1.0");
 }

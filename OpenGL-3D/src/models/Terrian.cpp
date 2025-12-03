@@ -26,8 +26,8 @@ std::vector<Vertex> Terrian::GenerateTerrianSubPart(int xPos, int zPos, int yPos
 	m_TerrianIndices.push_back(currentSubTerrians*4 + 0);
 	m_TerrianIndices.push_back(currentSubTerrians*4 + 1);
 	m_TerrianIndices.push_back(currentSubTerrians*4 + 2);
-	m_TerrianIndices.push_back(currentSubTerrians*4 + 2);
 	m_TerrianIndices.push_back(currentSubTerrians*4 + 0);
+	m_TerrianIndices.push_back(currentSubTerrians*4 + 2);
 	m_TerrianIndices.push_back(currentSubTerrians*4 + 3);
 
 	return subTerrian;

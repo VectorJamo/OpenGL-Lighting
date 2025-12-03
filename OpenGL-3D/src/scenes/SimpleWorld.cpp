@@ -5,9 +5,14 @@
 
 #include <iostream>
 
+#include <cstdlib>
+#include <ctime>
+
 SimpleWorld::SimpleWorld(GLFWwindow* window)
 	:SceneManager(window), m_VAO(0), m_VBO(0), m_Shader(nullptr), m_LightShader(nullptr), m_Camera(nullptr)
 {
+
+	srand(time(nullptr));
 }
 
 SimpleWorld::~SimpleWorld()
@@ -45,7 +50,7 @@ void SimpleWorld::Init()
 	glBindVertexArray(0);
 
 	// Shaders
-	m_Shader = new Shader("src/shaders/base/vs.glsl", "src/shaders/base/fs.glsl");
+	m_Shader = new Shader("src/shaders/world/vs.glsl", "src/shaders/world/fs.glsl");
 
 	// Camera
 	m_Camera = new Camera(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
@@ -54,29 +59,45 @@ void SimpleWorld::Init()
 
 	// Textures
 	m_FloorTexture = new Texture("res/dirt.jpg", GL_RGB);
-	m_TreeTexture = new Texture("res/tree_texture.png", GL_RGB);
-
-	//m_TreeTexture = new Texture("res/tree_texture.png", GL_RGBA);
+	m_TreeTexture = new Texture("res/tree_texture.png", GL_RGBA);
 
 	// Terrian
 	m_Identity = glm::mat4(1.0f);
+	
+	int numTerriansX = 6;
+	int numTerriansZ = 6;
 
-	m_Terrian.emplace_back(new Terrian(0.0f, 0.0f));
-	m_Terrian.emplace_back(new Terrian(-1.0f, 0.0f));
-	m_Terrian.emplace_back(new Terrian(-1.0f, 1.0f));
-	m_Terrian.emplace_back(new Terrian(0.0f, 1.0f));
+	for (int i = 0; i <= numTerriansZ; i++)
+	{
+		int gridZ = 3 - i;
+		for (int j = 0; j <= numTerriansX; j++)
+		{
+			int gridX = 3 - j;
+			m_Terrian.emplace_back(new Terrian(gridX, gridZ));
+		}
+	}
 
 	// Models
 	m_TreeModel = new Model("res/models/SimpleTree.obj");
-
-	glClearColor(0.2f, 0.8f, 0.8f, 1.0f);
-	glEnable(GL_DEPTH_TEST);
-
-	// TODO: PERFORMANCE OPTIMIZATION
 	
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_CCW);
+	m_NumTrees = 100;
+	m_TreePositions.reserve(m_NumTrees);
 
+	int totalTerrianX = numTerriansX * Terrian::GetTerrianSize();
+	int totalTerrianZ = numTerriansX * Terrian::GetTerrianSize();
+
+	for (int i = 0; i < m_NumTrees; i++)
+	{
+		float xpos = (totalTerrianX/2) - rand() % totalTerrianX;
+		float zpos = (totalTerrianZ/2) - rand() % totalTerrianZ;
+
+		m_TreePositions.emplace_back(glm::vec3(xpos, 0.0f, zpos));
+	}
+
+	m_SkyColor = glm::vec4(0.2f, 0.8f, 0.8f, 1.0f);
+
+	glClearColor(m_SkyColor.x, m_SkyColor.g, m_SkyColor.b, m_SkyColor.a);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void SimpleWorld::Update()
@@ -107,7 +128,8 @@ void SimpleWorld::Render()
 	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "projection"), 1, GL_FALSE, &projection[0][0]);
 	glUniform1i(glGetUniformLocation(m_Shader->GetShaderProgram(), "textureUnit"), 0);
 	glUniform3fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "cameraPosition"), 1, &m_Camera->GetCameraPosition()[0]);
-	
+	glUniform4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "skyColor"), 1, &m_SkyColor.x);
+
 	for (auto& terrian : m_Terrian) 
 	{
 		glBindVertexArray(terrian->GetTerrianVAO());
@@ -115,15 +137,18 @@ void SimpleWorld::Render()
 		glDrawElements(GL_TRIANGLES, terrian->GetTerrianIndices().size(), GL_UNSIGNED_SHORT, 0);
 	}
 	m_TreeTexture->Bind(0);
-
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(glm::vec3(0.0f, 10.0f, -5.0f));
-	model = glm::scale(model, glm::vec3(5.0f, 8.0f, 5.0f));
-
 	glBindVertexArray(m_TreeModel->GetModelVAO());
-	glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
 
-	glDrawElements(GL_TRIANGLES, m_TreeModel->GetModelIndices().size(), GL_UNSIGNED_SHORT, 0);
+	for (int i = 0; i < m_NumTrees; i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(m_TreePositions[i]);
+		model = glm::scale(model, glm::vec3(5.0f, 8.0f, 5.0f));
+
+		glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "model"), 1, GL_FALSE, &model[0][0]);
+		glUniformMatrix4fv(glGetUniformLocation(m_Shader->GetShaderProgram(), "view"), 1, GL_FALSE, &view[0][0]);
+		glDrawElements(GL_TRIANGLES, m_TreeModel->GetModelIndices().size(), GL_UNSIGNED_SHORT, 0);
+	}
 }
 
 void SimpleWorld::ProcessInput()

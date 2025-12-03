@@ -15,7 +15,7 @@ private:
 	const glm::vec3 m_WorldUp;
 	bool m_FirstFrame;
 
-	const float m_CameraSpeed = 0.2f;
+	const float m_CameraSpeed = 0.05f;
 	const float m_CameraMovementSpeed = 0.5f;
 
 public:
